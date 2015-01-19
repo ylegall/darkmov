@@ -1,0 +1,23 @@
+{
+	"name": "markov",
+	"description": "A markov text generator in D",
+	"copyright": "Copyright © 2015, ylegall",
+	"authors": ["ylegall"],
+
+	"dependencies": {
+	},
+
+    "configurations": [
+		{
+			"name": "cli",
+			"targetType": "executable",
+			"versions": ["cli"],
+			"mainSourceFile" : "src/main.d"
+		},
+		{
+			"name": "markov",
+			"targetType": "library",
+			"versions": ["library"],
+		}
+	]
+}
