@@ -8,14 +8,12 @@ struct Context
 {
     long maxBytes  = -1;
     long maxWords  = -1;
-    long maxLines  = -1;
 }
 
 auto greaterThan(ulong amount, long limit)
 {
     return (limit >= 0 && amount > limit);
 }
-
 
 void main(string[] args)
 {
@@ -28,7 +26,6 @@ void main(string[] args)
         "file|f", &inFilename,
         "bytes|b", &ctx.maxBytes,
         "words|w", &ctx.maxWords,
-        "lines|l", &ctx.maxLines,
         "output|o", &outFilename
     );
 
@@ -37,11 +34,11 @@ void main(string[] args)
 
     auto generator = new Generator(inFile);
 
-    while (true) {
+    foreach (token; generator) {
         if (generator.bytes.greaterThan(ctx.maxBytes)) break;
         if (generator.words.greaterThan(ctx.maxWords)) break;
-        if (generator.lines.greaterThan(ctx.maxLines)) break;
+
+        outFile.write(token, " ");
     }
 }
-
 
