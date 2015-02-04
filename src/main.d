@@ -20,19 +20,21 @@ void main(string[] args)
     Context ctx;
     string inFilename;
     string outFilename;
+    string tokenPattern;
 
     getopt(
         args,
         "file|f", &inFilename,
         "bytes|b", &ctx.maxBytes,
         "words|w", &ctx.maxWords,
-        "output|o", &outFilename
+        "output|o", &outFilename,
+        "regex|r", &tokenPattern
     );
 
     auto inFile = (inFilename)? File(inFilename, "r") : stdin;
     auto outFile = (outFilename)? File(outFilename, "w") : stdout;
 
-    auto generator = new Generator(inFile);
+    auto generator = new Generator(inFile, tokenPattern);
 
     foreach (token; generator) {
         if (generator.bytes.greaterThan(ctx.maxBytes)) break;

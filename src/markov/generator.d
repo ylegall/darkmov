@@ -22,8 +22,8 @@ class Generator
         Random rand;
     }
 
-    this (File file) {
-        model = new TrigramModel(file);
+    this (File file, string pattern = DEFAULT_PATTERN) {
+        model = new TrigramModel(file, DEFAULT_PATTERN);
         init();
     }
 
@@ -42,6 +42,8 @@ class Generator
     }
 
     auto popFront() {
+        _bytes += t1.length;
+        ++_words;
         auto temp = model.get(t1, t2, rand);
         t1 = t2;
         t2 = temp;
@@ -64,19 +66,27 @@ class TrigramModel
         Token t1, t2;
     }
 
-    this (File file) {
-        init(file);
+    this (File file, string pattern = "") {
+        init(file, pattern);
     }
 
-    void init(File file = stdin) {
+    void init(File file = stdin, string pattern = "") {
         root = new Node();
+        if (pattern) {
+            processFileLines(file, regex(pattern));
+        } else {
+            processFileLines(file, DEFAULT_REGEX);
+        }
+        //debug printModel();
+    }
+
+    auto processFileLines(T)(File file, T regex) {
         foreach (char[] line; file.byLine) {
-            auto tokens = tokenize(line);
+            auto tokens = tokenize(line, regex);
             foreach (token; tokens) {
                 processToken(token);
             }
         }
-        //printModel();
     }
 
     auto getInitialTokens(Random rand) {
@@ -84,10 +94,11 @@ class TrigramModel
         tokens[0] = randomToken(root.nodeMap, rand);
         auto node = root.nodeMap[tokens[0]];
         tokens[1] = randomToken(node.nodeMap, rand);
+        writeln(tokens);
         return tokens;
     }
 
-    debug auto printModel() {
+    auto printModel() {
         writeln("dumping model contents:");
         foreach (key1; root.nodeMap.keys) {
             auto node = root.nodeMap[key1];

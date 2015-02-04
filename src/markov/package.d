@@ -9,6 +9,7 @@ public
     import std.array;
     import std.algorithm;
     import std.exception;
+    import std.range;
     import std.random;
     import std.regex;
     import std.stdio;
