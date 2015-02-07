@@ -25,20 +25,20 @@ auto tokenize(T)(T line, Regex!char pattern)
     return matchAll(line, pattern).map!(a => a.hit.idup);
 }
 
-auto randomToken(NodeMap map, Random rand)
+auto randomToken(NodeMap map)
 {
     auto keys = map.keys;
-    return keys[uniform(0, keys.length, rand)];
+    return keys[uniform(0, keys.length)];
 }
 
-auto randomToken(TokenList list, Random rand)
+auto randomToken(TokenList list)
 {
-    return list.data[uniform(0, list.data.length, rand)];
+    return list.data[uniform(0, list.data.length)];
 }
 
 unittest
 {
     assert(equal(tokenize("one two. 'three' four? five six!", DEFAULT_REGEX),
                 ["one", "two.", "three", "four?", "five", "six!"]
-                ));
+    ));
 }

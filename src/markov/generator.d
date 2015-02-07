@@ -19,16 +19,16 @@ class Generator
         size_t _bytes;
         TrigramModel model;
         Token t1, t2;
-        Random rand;
     }
 
     this (File file, string pattern = DEFAULT_PATTERN) {
-        model = new TrigramModel(file, DEFAULT_PATTERN);
+        model = new TrigramModel(file, pattern);
         init();
     }
 
     private void init() {
-        auto tokens = model.getInitialTokens(rand);
+        import std.datetime;
+        auto tokens = model.getInitialTokens();
         t1 = tokens[0];
         t2 = tokens[1];
     }
@@ -44,7 +44,7 @@ class Generator
     auto popFront() {
         _bytes += t1.length;
         ++_words;
-        auto temp = model.get(t1, t2, rand);
+        auto temp = model.get(t1, t2);
         t1 = t2;
         t2 = temp;
     }
@@ -71,6 +71,7 @@ class TrigramModel
     }
 
     void init(File file = stdin, string pattern = "") {
+        writeln("PATTERN = ", pattern);
         root = new Node();
         if (pattern) {
             processFileLines(file, regex(pattern));
@@ -89,11 +90,11 @@ class TrigramModel
         }
     }
 
-    auto getInitialTokens(Random rand) {
+    auto getInitialTokens() {
         Token[2] tokens;
-        tokens[0] = randomToken(root.nodeMap, rand);
+        tokens[0] = randomToken(root.nodeMap);
         auto node = root.nodeMap[tokens[0]];
-        tokens[1] = randomToken(node.nodeMap, rand);
+        tokens[1] = randomToken(node.nodeMap);
         writeln(tokens);
         return tokens;
     }
@@ -129,7 +130,7 @@ class TrigramModel
         return *(token in node.nodeMap);
     }
 
-    auto get(Token t1, Token t2, Random rand) {
+    auto get(Token t1, Token t2) {
         auto node = getNode(root, t1);
         node = getNode(node, t2);
         enforce(node != null, "returned node was empty");
